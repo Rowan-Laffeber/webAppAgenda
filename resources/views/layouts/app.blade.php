@@ -1,16 +1,27 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Laravel App')</title>
-    
-    <!-- Dit is de officiële standalone Play CDN van Tailwind CSS v4 -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>@yield('title', 'Agenda App')</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    
-    @yield('content')
+<body class="bg-gray-100 font-sans">
+
+ {{-- Reusable header --}}
+ @if(!request()->is('login', 'register'))
+    @include('partials.header')
+@endif
+
+<main class="max-w-7xl mx-auto p-6">
+    @yield('content') {{-- Page-specific content goes here --}}
+</main>
+{{-- Reusable footer --}}
+@if(!request()->is('login', 'register'))
+    @include('partials.footer')
+@endif 
+
+@yield('scripts') {{-- Page-specific scripts go here --}}
 
 </body>
 </html>
