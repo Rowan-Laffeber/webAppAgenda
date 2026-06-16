@@ -3,62 +3,68 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Agenda;
+use App\Models\Activity;
+use Carbon\Carbon;
 
 class AgendaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $agendas = Agenda::where('user_id', auth()->id())->get();
+
+        return view('agendas.index', compact('agendas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('agendas.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        Agenda::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'description' => $request->description,
+            'color' => $request->color,
+        ]);
+
+        return redirect()->route('agendas.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Request $request, Agenda $agenda)
     {
-        //
+        $month = (int) $request->get('month', now()->month);
+        $year = (int) $request->get('year', now()->year);
+
+        $current = Carbon::create($year, $month, 1);
+
+        $start = $current->copy()->startOfMonth();
+        $end = $current->copy()->endOfMonth();
+
+        $days = collect();
+
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            $days->push($date->copy());
+        }
+
+        $activities = $agenda->activities()
+            ->whereBetween('start_datetime', [$start, $end])
+            ->get();
+
+        return view('agendas.show', compact(
+            'agenda',
+            'days',
+            'activities',
+            'current'
+        ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(Agenda $agenda)
     {
-        //
-    }
+        $agenda->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('agendas.index');
     }
 }

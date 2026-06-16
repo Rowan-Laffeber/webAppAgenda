@@ -13,6 +13,19 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('agenda_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->string('name');
+            $table->text('description')->nullable();
+
+            $table->dateTime('start_datetime');
+            $table->dateTime('end_datetime');
+
+            $table->string('color');
+
             $table->timestamps();
         });
     }
