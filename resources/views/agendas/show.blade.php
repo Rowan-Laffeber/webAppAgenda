@@ -98,9 +98,10 @@
 
                         <div class="mt-1 space-y-1">
                             @foreach ($dayActivities as $activity)
-                                <div class="text-[10px] px-2 py-1 rounded bg-indigo-100 text-slate-800 truncate">
+                                <a href="{{ route('activities.show', $activity) }}"
+                                   class="block text-[10px] px-2 py-1 rounded bg-indigo-100 text-slate-800 truncate hover:bg-indigo-200">
                                     {{ $activity->name }}
-                                </div>
+                                </a>
                             @endforeach
                         </div>
 
