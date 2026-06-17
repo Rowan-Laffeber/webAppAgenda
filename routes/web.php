@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ProfileController; 
 
 Route::middleware('guest')->group(function () {
 
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('agendas', AgendaController::class);
     Route::resource('activities', ActivityController::class);
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
