@@ -31,3 +31,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('activities', ActivityController::class);
+
+Route::resource('agendas', AgendaController::class);

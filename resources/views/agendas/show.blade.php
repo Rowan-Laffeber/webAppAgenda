@@ -99,8 +99,19 @@
                         <div class="mt-1 space-y-1">
                             @foreach ($dayActivities as $activity)
                                 <a href="{{ route('activities.show', $activity) }}"
-                                   class="block text-[10px] px-2 py-1 rounded bg-indigo-100 text-slate-800 truncate hover:bg-indigo-200">
-                                    {{ $activity->name }}
+                                   class="block rounded px-2 py-1 text-white"
+                                   style="background-color: {{ $activity->color }}">
+
+                                    <div class="text-[10px] font-semibold truncate">
+                                        {{ $activity->name }}
+                                    </div>
+
+                                    <div class="text-[9px] opacity-90">
+                                        {{ \Carbon\Carbon::parse($activity->start_datetime)->format('H:i') }}
+                                        -
+                                        {{ \Carbon\Carbon::parse($activity->end_datetime)->format('H:i') }}
+                                    </div>
+
                                 </a>
                             @endforeach
                         </div>
@@ -110,6 +121,28 @@
                 @endforeach
 
             </div>
+
+            <div class="flex gap-3 mt-8">
+
+                <a href="{{ route('agendas.edit', $agenda) }}"
+                   class="px-4 py-2 bg-blue-600 text-white rounded-xl">
+                    Bewerken
+                </a>
+
+                <form action="{{ route('agendas.destroy', $agenda) }}"
+                      method="POST"
+                      onsubmit="return confirm('Weet je zeker dat je deze agenda wilt verwijderen?')">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white rounded-xl">
+                        Verwijderen
+                    </button>
+                </form>
+
+            </div>
+
         </div>
     </div>
 @endsection

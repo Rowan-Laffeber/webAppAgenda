@@ -61,6 +61,22 @@ class AgendaController extends Controller
         ));
     }
 
+    public function edit(Agenda $agenda)
+    {
+        return view('agendas.edit', compact('agenda'));
+    }
+
+    public function update(Request $request, Agenda $agenda)
+    {
+        $agenda->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'color' => $request->color,
+        ]);
+
+        return redirect()->route('agendas.show', $agenda);
+    }
+
     public function destroy(Agenda $agenda)
     {
         $agenda->delete();
