@@ -9,7 +9,7 @@
       Agenda
     </a>
 
-    <a href="/friends" class="flex items-center border-r border-slate-200 px-8 text-slate-500 transition duration-200 hover:bg-slate-50 hover:text-slate-900">
+    <a href="/friends?tab=friends" class="flex items-center border-r border-slate-200 px-8 text-slate-500 transition duration-200 hover:bg-slate-50 hover:text-slate-900">
       Friends
     </a>
 
