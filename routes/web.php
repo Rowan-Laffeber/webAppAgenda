@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ProfileController; 
+use App\Http\Controllers\FriendController;
 
 Route::middleware('guest')->group(function () {
 
@@ -33,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    
+    Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
