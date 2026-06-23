@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+
 
 class FriendController extends Controller
 {
@@ -14,7 +16,18 @@ class FriendController extends Controller
     {
         // default tab if none selected
         $tab = $request->get('tab', 'requests');
-
+        
         return view('friends.index', compact('tab'));
+    }
+
+    public function searchUsers(Request $request)
+    {   
+        if (empty($request->search)){
+            return '';
+        }
+        $users = User::where('name', 'like', '%' . $request->search . '%')
+            ->get();
+        
+        return view('friends.users-list', compact('users'));
     }
 }

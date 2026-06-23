@@ -2,12 +2,29 @@
 
 <input
     type="text"
+    id="search"
     placeholder="Search users..."
     class="w-full p-3 border rounded-xl mb-4"
 />
 
-<div class="border rounded-xl p-4 bg-slate-50">
-    <p class="text-sm text-slate-500">
-        Start typing to search users
-    </p>
+<div id="results">
+    Start typing to search users
 </div>
+
+<script>
+document.getElementById('search').addEventListener('input', function () {
+
+if (this.value.trim() === '') {
+    document.getElementById('results').innerHTML =
+        'Start typing to search users';
+    return;
+}
+
+fetch(`/friends/search-users?search=${this.value}`)
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('results').innerHTML = html;
+    });
+
+});
+</script>
