@@ -27,4 +27,28 @@ fetch(`/friends/search-users?search=${this.value}`)
     });
 
 });
+
+
+document.addEventListener('click', function (event) {
+
+    if (!event.target.classList.contains('send-request')) {        
+        return;
+    }
+    
+
+    const userId = event.target.dataset.user;
+
+    fetch(`/friends/request/${userId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(() => {
+        event.target.innerText = 'Request Sent';
+        event.target.disabled = true;
+    });
+
+});
 </script>
