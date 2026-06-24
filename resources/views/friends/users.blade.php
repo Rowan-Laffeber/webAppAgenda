@@ -14,29 +14,26 @@
 <script>
 document.getElementById('search').addEventListener('input', function () {
 
-if (this.value.trim() === '') {
-    document.getElementById('results').innerHTML =
-        'Start typing to search users';
-    return;
-}
+    if (this.value.trim() === '') {
+        document.getElementById('results').innerHTML =
+            'Start typing to search users';
+        return;
+    }
 
-fetch(`/friends/search-users?search=${this.value}`)
-    .then(response => response.text())
-    .then(html => {
-        document.getElementById('results').innerHTML = html;
-    });
+    fetch(`/friends/search-users?search=${this.value}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('results').innerHTML = html;
+        });
 
 });
 
-
 document.addEventListener('click', function (event) {
 
-    if (!event.target.classList.contains('send-request')) {        
-        return;
-    }
-    
+    const button = event.target.closest('.send-request');
+    if (!button) return;
 
-    const userId = event.target.dataset.user;
+    const userId = button.dataset.user;
 
     fetch(`/friends/request/${userId}`, {
         method: 'POST',
@@ -45,9 +42,13 @@ document.addEventListener('click', function (event) {
         }
     })
     .then(response => response.json())
-    .then(() => {
-        event.target.innerText = 'Request Sent';
-        event.target.disabled = true;
+    .then(data => {
+
+        if (data.success) {
+            button.outerHTML =
+                `<span class="text-gray-500 text-sm">Request Sent</span>`;
+        }
+
     });
 
 });

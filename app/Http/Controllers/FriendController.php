@@ -19,7 +19,21 @@ class FriendController extends Controller
         // default tab if none selected
         $tab = $request->get('tab', 'requests');
 
-        return view('friends.index', compact('tab'));
+        $incomingRequests = FriendRequest::with('sender')
+        ->where('receiver_id', Auth::id())
+        ->where('request_status', 'pending')
+        ->get();
+
+        $outgoingRequests = FriendRequest::with('receiver')
+        ->where('sender_id', Auth::id())
+        ->where('request_status', 'pending')
+        ->get();
+
+        return view('friends.index', compact(
+            'tab',
+            'incomingRequests',
+            'outgoingRequests'
+        ));
     }
 
     public function searchUsers(Request $request)
@@ -27,8 +41,34 @@ class FriendController extends Controller
         if (empty($request->search)){
             return '';
         }
+
+        $me = Auth::id();
+
         $users = User::where('name', 'like', '%' . $request->search . '%')
-            ->get();
+            ->where('id', '!=', Auth::id())
+            ->get()
+            ->map(function ($user) use ($me) {
+
+                $request = FriendRequest::where(function ($q) use ($me, $user) {
+                    $q->where('sender_id', $me)
+                      ->where('receiver_id', $user->id);
+                })->orWhere(function ($q) use ($me, $user) {
+                    $q->where('sender_id', $user->id)
+                      ->where('receiver_id', $me);
+                })->first();
+    
+                if (!$request) {
+                    $user->friend_status = 'none';
+                } elseif ($request->request_status === 'accepted') {
+                    $user->friend_status = 'friends';
+                } elseif ($request->sender_id == $me) {
+                    $user->friend_status = 'outgoing';
+                } else {
+                    $user->friend_status = 'incoming';
+                }
+    
+                return $user;
+            });
         
         return view('friends.users-list', compact('users'));
     }
@@ -37,13 +77,30 @@ class FriendController extends Controller
         if ($user->id === Auth::id()){
             abort(403);
         }
-        FriendRequest::firstOrCreate([
+
+        $exists = FriendRequest::where(function ($q) use ($user){
+            $q->where('sender_id', Auth::id())
+            ->where('receiver_id', $user->id);
+        })->orWhere(function ($q) use ($user){
+            $q->where('sender_id', $user->id)
+            ->where('receiver_id',  Auth::id());
+        })->exists();
+
+
+        if ($exists) {
+            return response()->json([
+                'success' => false
+            ]);
+        }
+
+        FriendRequest::Create([
             'sender_id' => Auth::id(),
             'receiver_id' => $user->id,
+            'request_status' => 'pending'
         ]);
 
         return response()->json([
-            'succes' => true
+            'success' => true
         ]);
     }
 }
