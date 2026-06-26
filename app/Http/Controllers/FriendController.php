@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Friend;
 use App\Models\FriendRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,11 +30,30 @@ class FriendController extends Controller
         ->where('request_status', 'pending')
         ->get();
 
+        $friends = Friend::with('friend')
+        ->where('user_id', Auth::id())
+        ->get();
+
         return view('friends.index', compact(
             'tab',
             'incomingRequests',
-            'outgoingRequests'
+            'outgoingRequests',
+            'friends'
         ));
+    }
+
+    public function searchFriends(Request $request)
+    {
+        $search = $request->search;
+    
+        $friends = Friend::with('friend')
+            ->where('user_id', Auth::id())
+            ->whereHas('friend', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            })
+            ->get();
+    
+        return view('friends.friends-list', compact('friends'));
     }
 
     public function searchUsers(Request $request)
@@ -101,6 +121,50 @@ class FriendController extends Controller
 
         return response()->json([
             'success' => true
+        ]);
+    }
+
+    public function accept(FriendRequest $request)
+    {
+        // Only the receiver may accept
+        if ($request->receiver_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Prevent duplicate friendships
+        Friend::firstOrCreate([
+            'user_id'   => $request->sender_id,
+            'friend_id' => $request->receiver_id,
+        ]);
+
+        Friend::firstOrCreate([
+            'user_id'   => $request->receiver_id,
+            'friend_id' => $request->sender_id,
+        ]);
+
+        // Mark request as accepted
+        $request->update([
+            'request_status' => 'accepted',
+        ]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    public function decline(FriendRequest $request)
+    {
+        // Only the receiver may decline
+        if ($request->receiver_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->update([
+            'request_status' => 'declined',
+        ]);
+
+        return response()->json([
+            'success' => true,
         ]);
     }
 }

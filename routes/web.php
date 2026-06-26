@@ -37,7 +37,10 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
     Route::get('/friends/search-users', [FriendController::class, 'searchUsers']);
+    Route::get('/friends/search', [FriendController::class, 'searchFriends']);
     Route::post('/friends/request/{user}', [FriendController::class, 'sendRequest'])->name('friends.request');
+    Route::post('/friends/request/{request}/accept', [FriendController::class, 'accept']);
+    Route::post('/friends/request/{request}/decline', [FriendController::class, 'decline']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

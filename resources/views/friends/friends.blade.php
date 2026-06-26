@@ -1,20 +1,29 @@
 <h2 class="text-lg font-bold mb-4">My Friends</h2>
 
-{{-- SEARCH BAR --}}
 <div class="mb-4">
     <input
         type="text"
+        id="friend-search"
         placeholder="Search friends..."
         class="w-full p-3 border rounded-xl"
     >
 </div>
 
-{{-- FRIEND LIST --}}
-<div class="space-y-2">
+<div id="friends-list" class="space-y-2">
 
-    {{-- 3 PLACEHOLDER FRIENDS --}}
-    <div class="p-3 border rounded-xl bg-slate-50">Friend 1</div>
-    <div class="p-3 border rounded-xl bg-slate-50">Friend 2</div>
-    <div class="p-3 border rounded-xl bg-slate-50">Friend 3</div>
+    @include('friends.friends-list', ['friends' => $friends])
 
 </div>
+<script>
+document.addEventListener('input', function (e) {
+
+    if (e.target.id !== 'friend-search') return;
+
+    fetch(`/friends/search?search=${e.target.value}`)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('friends-list').innerHTML = html;
+        });
+
+});
+</script>
