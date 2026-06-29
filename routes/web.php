@@ -6,6 +6,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ProfileController; 
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\AgendaInvitationController;
 
 Route::middleware('guest')->group(function () {
 
@@ -28,6 +29,11 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('agendas', AgendaController::class);
     Route::resource('activities', ActivityController::class);
+
+    Route::post('/agenda/{agenda}/invite', [AgendaInvitationController::class, 'sendInvitation'])->name('agenda.invite');
+    Route::post('/agenda/invitations/{invitation}/accept', [AgendaInvitationController::class, 'accept'])->name('agenda.invitations.accept');
+    Route::post('/agenda/invitations/{invitation}/decline', [AgendaInvitationController::class, 'decline'])->name('agenda.invitations.decline');
+
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
