@@ -25,9 +25,9 @@ class AgendaController extends Controller
     {
         Agenda::create([
             'user_id' => auth()->id(),
-            'name' => $request->name,
+            'name'    => $request->name,
             'description' => $request->description,
-            'color' => $request->color,
+            'color'   => $request->color,
         ]);
 
         return redirect()->route('agendas.index');
@@ -35,29 +35,60 @@ class AgendaController extends Controller
 
     public function show(Request $request, Agenda $agenda)
     {
+        $view  = $request->get('view', 'month');
         $month = (int) $request->get('month', now()->month);
-        $year = (int) $request->get('year', now()->year);
+        $year  = (int) $request->get('year', now()->year);
+        $week  = (int) $request->get('week', now()->weekOfYear);
+        $day   = (int) $request->get('day', now()->day);
 
-        $current = Carbon::create($year, $month, 1);
+        switch ($view) {
+            case 'day':
+                $current = Carbon::create($year, $month, $day);
+                $start   = $current->copy()->startOfDay();
+                $end     = $current->copy()->endOfDay();
+                $days    = collect([$current->copy()]);
+                break;
 
-        $start = $current->copy()->startOfMonth();
-        $end = $current->copy()->endOfMonth();
+            case 'week':
+                $current = Carbon::now()->setISODate($year, $week)->startOfWeek();
+                $start   = $current->copy()->startOfWeek();
+                $end     = $current->copy()->endOfWeek();
+                $days    = collect();
+                for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+                    $days->push($d->copy());
+                }
+                break;
 
-        $days = collect();
+            case 'year':
+                $current = Carbon::create($year, 1, 1);
+                $start   = $current->copy()->startOfYear();
+                $end     = $current->copy()->endOfYear();
+                $days    = collect();
+                for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+                    $days->push($d->copy());
+                }
+                break;
 
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            $days->push($date->copy());
+            default:
+                $current = Carbon::create($year, $month, 1);
+                $start   = $current->copy()->startOfMonth();
+                $end     = $current->copy()->endOfMonth();
+                $days    = collect();
+                for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+                    $days->push($d->copy());
+                }
+                break;
         }
 
         $activities = $agenda->activities()
-            ->whereBetween('start_datetime', [$start, $end])
+            ->where('start_datetime', '<=', $end)
+            ->where('end_datetime', '>=', $start)
+            ->orderBy('start_datetime')
             ->get();
 
         return view('agendas.show', compact(
-            'agenda',
-            'days',
-            'activities',
-            'current'
+            'agenda', 'days', 'activities', 'current', 'view',
+            'month', 'year', 'week', 'day'
         ));
     }
 
@@ -69,9 +100,9 @@ class AgendaController extends Controller
     public function update(Request $request, Agenda $agenda)
     {
         $agenda->update([
-            'name' => $request->name,
+            'name'        => $request->name,
             'description' => $request->description,
-            'color' => $request->color,
+            'color'       => $request->color,
         ]);
 
         return redirect()->route('agendas.show', $agenda);

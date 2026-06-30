@@ -21,7 +21,6 @@
                 @csrf
                 @method('PUT')
 
-                {{-- naam --}}
                 <div>
                     <label class="text-xs font-semibold text-slate-500">
                         Naam
@@ -35,7 +34,6 @@
                         class="w-full mt-1 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
 
-                {{-- omschrijving --}}
                 <div>
                     <label class="text-xs font-semibold text-slate-500">
                         Omschrijving
@@ -48,7 +46,6 @@
                         class="w-full mt-1 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $agenda->description) }}</textarea>
                 </div>
 
-                {{-- kleur --}}
                 <div>
                     <label class="text-xs font-semibold text-slate-500">
                         Kleur
@@ -61,7 +58,6 @@
                         class="w-full h-12 mt-1 rounded-xl border-slate-200">
                 </div>
 
-                {{-- buttons --}}
                 <div class="flex gap-3">
 
                     <button

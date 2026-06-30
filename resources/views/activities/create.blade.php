@@ -18,7 +18,6 @@
             <form method="POST" action="{{ route('activities.store') }}" class="space-y-5">
                 @csrf
 
-                {{-- agenda --}}
                 <select name="agenda_id"
                         class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500">
                     @foreach($agendas as $agenda)
@@ -28,15 +27,12 @@
                     @endforeach
                 </select>
 
-                {{-- naam --}}
                 <input type="text" name="name" placeholder="Naam van activiteit"
                        class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500">
 
-                {{-- omschrijving --}}
                 <textarea name="description" placeholder="Omschrijving"
                           class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500"></textarea>
 
-                {{-- datetime --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="text-xs font-semibold text-slate-500">Start</label>
@@ -51,14 +47,12 @@
                     </div>
                 </div>
 
-                {{-- kleur --}}
                 <div>
                     <label class="text-xs font-semibold text-slate-500">Kleur</label>
                     <input type="color" name="color"
                            class="w-full h-12 mt-1 rounded-xl border-slate-200">
                 </div>
 
-                {{-- submit --}}
                 <button type="submit"
                         class="w-full bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-slate-900/10 hover:shadow-xl transition duration-200 uppercase tracking-widest text-xs">
                     Opslaan

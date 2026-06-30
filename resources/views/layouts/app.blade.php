@@ -19,7 +19,7 @@
 {{-- Reusable footer --}}
 @if(!request()->is('login', 'register'))
     @include('partials.footer')
-@endif 
+@endif
 
 @yield('scripts') {{-- Page-specific scripts go here --}}
 
