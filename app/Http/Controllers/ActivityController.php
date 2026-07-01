@@ -10,7 +10,14 @@ class ActivityController extends Controller
 {
     public function create()
     {
-        $agendas = Agenda::where('user_id', auth()->id())->get();
+        $userId = auth()->id();
+
+        $joinedAgendaIds = \App\Models\AgendaMember::where('user_id', $userId)
+            ->pluck('agenda_id');
+
+        $agendas = \App\Models\Agenda::where('user_id', $userId)
+            ->orWhereIn('id', $joinedAgendaIds)
+            ->get();
 
         return view('activities.create', compact('agendas'));
     }
