@@ -23,6 +23,10 @@
                    class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-semibold uppercase tracking-widest hover:bg-slate-200 transition">
                     Bewerken
                 </a>
+                <a href="{{ route('agendas.invite', $agenda) }}"
+                   class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-semibold uppercase tracking-widest hover:bg-slate-200 transition">
+                    Uitnodigen
+                </a>
                 <form action="{{ route('agendas.destroy', $agenda) }}" method="POST"
                       onsubmit="return confirm('Weet je zeker dat je deze agenda wilt verwijderen?')">
                     @csrf

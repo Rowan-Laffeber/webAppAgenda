@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\ProfileController; 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\AgendaInvitationController;
 
@@ -31,8 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('activities', ActivityController::class);
 
     Route::post('/agenda/{agenda}/invite', [AgendaInvitationController::class, 'sendInvitation'])->name('agenda.invite');
-    Route::post('/agenda/invitations/{invitation}/accept', [AgendaInvitationController::class, 'accept'])->name('agenda.invitations.accept');
-    Route::post('/agenda/invitations/{invitation}/decline', [AgendaInvitationController::class, 'decline'])->name('agenda.invitations.decline');
+    Route::get('/agendas/{agenda}/invite', [AgendaInvitationController::class, 'showInvite'])->name('agendas.invite');
+    Route::post('/invitations/{invitation}/accept', [AgendaInvitationController::class, 'accept'])->name('invitations.accept');
+    Route::post('/invitations/{invitation}/decline', [AgendaInvitationController::class, 'decline'])->name('invitations.decline');
 
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -40,7 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    
+    Route::get('/invitations', [AgendaInvitationController::class, 'showInvitations'])->name('invitations.index');
+
     Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
     Route::get('/friends/search-users', [FriendController::class, 'searchUsers']);
     Route::get('/friends/search', [FriendController::class, 'searchFriends']);

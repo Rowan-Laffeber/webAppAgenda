@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Friend;
+use App\Models\Agenda;
 use App\Models\AgendaInvitation;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,6 +14,34 @@ class AgendaInvitationController extends Controller
     /**
      * Send an agenda invitation to a friend
      */
+
+    public function showInvite(Agenda $agenda)
+    {
+        $friends = Friend::where('user_id', Auth::id())
+            ->with('friend')
+            ->get()
+            ->pluck('friend');
+
+        $invitedIds = AgendaInvitation::where('agenda_id', $agenda->id)
+            ->pluck('receiver_id');
+
+        return view('agendas.invite', compact('agenda', 'friends', 'invitedIds'));
+    }
+
+    public function showInvitations()
+    {
+        $incoming = AgendaInvitation::where('receiver_id', Auth::id())
+            ->where('invitation_status', 'pending')
+            ->with(['sender', 'agenda'])
+            ->get();
+
+        $outgoing = AgendaInvitation::where('sender_id', Auth::id())
+            ->with(['receiver', 'agenda'])
+            ->get();
+
+        return view('agendas.invitations', compact('incoming', 'outgoing'));
+    }
+
     public function sendInvitation(Request $request, $agendaId)
     {
         $receiverId = $request->input('receiver_id');

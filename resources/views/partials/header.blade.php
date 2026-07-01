@@ -13,6 +13,10 @@
       Friends
     </a>
 
+      <a href="/invitations" class="flex items-center border-r border-slate-200 px-8 text-slate-500 transition duration-200 hover:bg-slate-50 hover:text-slate-900">
+          Uitnodigingen
+      </a>
+
     <a href="/profile" class="flex items-center border-r border-slate-200 px-8 text-slate-500 transition duration-200 hover:bg-slate-50 hover:text-slate-900">
       Profile
     </a>
