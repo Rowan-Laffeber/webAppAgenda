@@ -22,7 +22,6 @@ return new class extends Migration
             $table->enum('request_status', ['pending', 'accepted', 'declined'])->default('pending');
             $table->timestamps();
 
-            //Prevents spamming duplicate requests
             $table->unique(['sender_id', 'receiver_id']);
         });
     }

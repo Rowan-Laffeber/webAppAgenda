@@ -2,9 +2,6 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-    {{-- ========================= --}}
-    {{-- INCOMING REQUESTS --}}
-    {{-- ========================= --}}
     <div class="border rounded-xl p-4 bg-slate-50">
 
         <h3 class="font-semibold mb-3">Incoming</h3>
@@ -41,9 +38,6 @@
 
     </div>
 
-    {{-- ========================= --}}
-    {{-- OUTGOING REQUESTS --}}
-    {{-- ========================= --}}
     <div class="border rounded-xl p-4 bg-slate-50">
 
         <h3 class="font-semibold mb-3">Outgoing</h3>
@@ -78,9 +72,6 @@
 
 </div>
 
-{{-- ========================= --}}
-{{-- REQUEST POPUP --}}
-{{-- ========================= --}}
 <div
     id="request-modal"
     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"

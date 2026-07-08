@@ -26,7 +26,6 @@ return new class extends Migration
             $table->dateTime('created_at')->useCurrent();
             $table->dateTime('responded_at')->nullable();
 
-            // Prevents spamming duplicate invitations to the same agenda
             $table->unique(['agenda_id', 'receiver_id']);
         });
     }

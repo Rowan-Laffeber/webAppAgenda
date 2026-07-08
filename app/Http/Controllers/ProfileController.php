@@ -8,16 +8,20 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
+
+    // profile index
     public function index()
     {
         return view('profile.index');
     }
 
+    // profile edit
     public function edit()
     {
         return view('profile.edit');
     }
 
+    // profile update
     public function update(Request $request)
     {
         $request->validate([
@@ -28,12 +32,9 @@ class ProfileController extends Controller
         ]);
 
         $user = Auth::user();
-
-        // Update basic info
         $user->name = $request->name;
         $user->email = $request->email;
 
-        // Update password only if provided
         if ($request->filled('new_password')) {
             if (!Hash::check($request->current_password, $user->password)) {
                 return back()->withErrors([
@@ -51,6 +52,7 @@ class ProfileController extends Controller
             ->with('success', 'Profile updated successfully.');
     }
 
+    // delete profile/account
     public function destroy(Request $request)
     {
         $user = Auth::user();

@@ -7,20 +7,19 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
- {{-- Reusable header --}}
  @if(!request()->is('login', 'register'))
     @include('partials.header')
 @endif
 
 <main class="max-w-7xl mx-auto p-6">
-    @yield('content') {{-- Page-specific content goes here --}}
+    @yield('content')
 </main>
-{{-- Reusable footer --}}
+
 @if(!request()->is('login', 'register'))
     @include('partials.footer')
 @endif
 
-@yield('scripts') {{-- Page-specific scripts go here --}}
+@yield('scripts')
 
 </body>
 </html>

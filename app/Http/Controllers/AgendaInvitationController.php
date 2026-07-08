@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AgendaInvitationController extends Controller
 {
-    /**
-     * Send an agenda invitation to a friend
-     */
-
+    // show friends to invite
     public function showInvite(Agenda $agenda)
     {
         $friends = Friend::where('user_id', Auth::id())
@@ -28,6 +25,7 @@ class AgendaInvitationController extends Controller
         return view('agendas.invite', compact('agenda', 'friends', 'invitedIds'));
     }
 
+    // show received invitations
     public function showInvitations()
     {
         $incoming = AgendaInvitation::where('receiver_id', Auth::id())
@@ -42,11 +40,11 @@ class AgendaInvitationController extends Controller
         return view('agendas.invitations', compact('incoming', 'outgoing'));
     }
 
+    // send invitations
     public function sendInvitation(Request $request, $agendaId)
     {
         $receiverId = $request->input('receiver_id');
 
-        // 1. Prevent inviting yourself
         if ($receiverId === Auth::id()) {
             return response()->json([
                 'success' => false,
@@ -54,7 +52,6 @@ class AgendaInvitationController extends Controller
             ], 403);
         }
 
-        // 2. Enforce logic: Check if the user is actually a friend
         $isFriend = Friend::where('user_id', Auth::id())
             ->where('friend_id', $receiverId)
             ->exists();
@@ -66,7 +63,6 @@ class AgendaInvitationController extends Controller
             ], 403);
         }
 
-        // 3. Prevent duplicate requests (handles 'pending', 'accepted', 'declined' values)
         $exists = AgendaInvitation::where('agenda_id', $agendaId)
             ->where('receiver_id', $receiverId)
             ->exists();
@@ -78,13 +74,12 @@ class AgendaInvitationController extends Controller
             ]);
         }
 
-        // 4. Create the invitation using your schema fields
         AgendaInvitation::create([
             'agenda_id' => $agendaId,
             'sender_id' => Auth::id(),
             'receiver_id' => $receiverId,
             'invitation_status' => 'pending',
-            'created_at' => now(), // Explicitly set since timestamps are customized
+            'created_at' => now(),
         ]);
 
         return response()->json([
@@ -92,17 +87,14 @@ class AgendaInvitationController extends Controller
         ]);
     }
 
-        /**
-     * Accept an agenda invitation
-     */
+    // accept agenda invitations
     public function accept(AgendaInvitation $invitation)
     {
-        // Only the receiver may accept
         if ($invitation->receiver_id !== \Auth::id()) {
             abort(403);
         }
 
-        // Prevent duplicates in members table if they double-click
+        // prevent duplicates
         \App\Models\AgendaMember::firstOrCreate([
             'agenda_id' => $invitation->agenda_id,
             'user_id'   => $invitation->receiver_id,
@@ -110,7 +102,6 @@ class AgendaInvitationController extends Controller
             'joined_at' => now()
         ]);
 
-        // Update the invitation status to match your layout style
         $invitation->update([
             'invitation_status' => 'accepted',
             'responded_at' => now(),
@@ -121,17 +112,13 @@ class AgendaInvitationController extends Controller
         ]);
     }
 
-    /**
-     * Decline an agenda invitation
-     */
+    // decline agenda invitations
     public function decline(AgendaInvitation $invitation)
     {
-        // Only the receiver may decline
         if ($invitation->receiver_id !== Auth::id()) {
             abort(403);
         }
 
-        // Match your friend request styling for updating status
         $invitation->update([
             'invitation_status' => 'declined',
             'responded_at' => now(),

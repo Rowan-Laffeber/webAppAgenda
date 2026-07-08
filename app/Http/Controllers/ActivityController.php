@@ -8,6 +8,7 @@ use App\Models\Agenda;
 
 class ActivityController extends Controller
 {
+    // create activity
     public function create()
     {
         $userId = auth()->id();
@@ -22,6 +23,7 @@ class ActivityController extends Controller
         return view('activities.create', compact('agendas'));
     }
 
+    // store activity
     public function store(Request $request)
     {
         $request->validate([
@@ -44,11 +46,13 @@ class ActivityController extends Controller
             ->route('activities.show', Activity::latest()->first());
     }
 
+    // show activity
     public function show(Activity $activity)
     {
         return view('activities.show', compact('activity'));
     }
 
+    // edit activity
     public function edit(Activity $activity)
     {
         $agendas = Agenda::where('user_id', auth()->id())->get();
@@ -56,6 +60,7 @@ class ActivityController extends Controller
         return view('activities.edit', compact('activity', 'agendas'));
     }
 
+    // update activity
     public function update(Request $request, Activity $activity)
     {
         $request->validate([
@@ -79,6 +84,7 @@ class ActivityController extends Controller
             ->with('success', 'Activiteit bijgewerkt.');
     }
 
+    // delete activity
     public function destroy(Activity $activity)
     {
         $agendaId = $activity->agenda_id;

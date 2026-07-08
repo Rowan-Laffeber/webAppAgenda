@@ -7,7 +7,6 @@
 
     <div class="max-w-6xl mx-auto bg-white rounded-3xl border shadow flex overflow-hidden">
 
-        {{-- SIDEBAR --}}
         <div class="w-64 bg-slate-50 border-r p-4 flex flex-col gap-2">
 
             <a href="?tab=requests"
@@ -27,7 +26,6 @@
 
         </div>
 
-        {{-- CONTENT --}}
         <div class="flex-1 p-6">
 
             @if(request('tab') === 'requests')

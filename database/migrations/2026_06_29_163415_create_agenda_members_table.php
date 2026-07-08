@@ -21,7 +21,6 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->dateTime('joined_at')->useCurrent();
 
-            // Prevents duplicate member entries in the same agenda
             $table->unique(['agenda_id', 'user_id']);
         });
     }

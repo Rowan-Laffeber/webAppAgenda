@@ -11,13 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class FriendController extends Controller
 {
-    /**
-     * Main friends page
-     * Handles tabs: requests / friends / users
-     */
+    // index
     public function index(Request $request)
     {
-        // default tab if none selected
         $tab = $request->get('tab', 'requests');
 
         $incomingRequests = FriendRequest::with('sender')
@@ -42,22 +38,24 @@ class FriendController extends Controller
         ));
     }
 
+    // friend search
     public function searchFriends(Request $request)
     {
         $search = $request->search;
-    
+
         $friends = Friend::with('friend')
             ->where('user_id', Auth::id())
             ->whereHas('friend', function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%');
             })
             ->get();
-    
+
         return view('friends.friends-list', compact('friends'));
     }
 
+    // user search
     public function searchUsers(Request $request)
-    {   
+    {
         if (empty($request->search)){
             return '';
         }
@@ -76,7 +74,7 @@ class FriendController extends Controller
                     $q->where('sender_id', $user->id)
                       ->where('receiver_id', $me);
                 })->first();
-    
+
                 if (!$request) {
                     $user->friend_status = 'none';
                 } elseif ($request->request_status === 'accepted') {
@@ -86,13 +84,14 @@ class FriendController extends Controller
                 } else {
                     $user->friend_status = 'incoming';
                 }
-    
+
                 return $user;
             });
-        
+
         return view('friends.users-list', compact('users'));
     }
 
+    // send friend request
     public function sendRequest(User $user){
         if ($user->id === Auth::id()){
             abort(403);
@@ -124,14 +123,13 @@ class FriendController extends Controller
         ]);
     }
 
+    // accept friend request
     public function accept(FriendRequest $request)
     {
-        // Only the receiver may accept
         if ($request->receiver_id !== Auth::id()) {
             abort(403);
         }
 
-        // Prevent duplicate friendships
         Friend::firstOrCreate([
             'user_id'   => $request->sender_id,
             'friend_id' => $request->receiver_id,
@@ -142,7 +140,6 @@ class FriendController extends Controller
             'friend_id' => $request->sender_id,
         ]);
 
-        // Mark request as accepted
         $request->update([
             'request_status' => 'accepted',
         ]);
@@ -152,9 +149,9 @@ class FriendController extends Controller
         ]);
     }
 
+    // decline friend request
     public function decline(FriendRequest $request)
     {
-        // Only the receiver may decline
         if ($request->receiver_id !== Auth::id()) {
             abort(403);
         }

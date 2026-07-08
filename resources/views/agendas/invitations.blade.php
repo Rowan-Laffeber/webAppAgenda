@@ -13,7 +13,6 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            {{-- INCOMING --}}
             <div class="border rounded-xl p-4 bg-slate-50">
                 <h3 class="font-semibold mb-3">Ontvangen</h3>
 
@@ -35,7 +34,6 @@
                 </div>
             </div>
 
-            {{-- OUTGOING --}}
             <div class="border rounded-xl p-4 bg-slate-50">
                 <h3 class="font-semibold mb-3">Verstuurd</h3>
 
@@ -60,7 +58,6 @@
     </div>
 </div>
 
-{{-- POPUP --}}
 <div id="invite-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
     <div class="bg-white w-full max-w-md rounded-xl shadow-xl p-6">
         <h2 class="text-xl font-bold mb-2">Agenda uitnodiging</h2>

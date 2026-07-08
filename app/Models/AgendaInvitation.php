@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AgendaInvitation extends Model
 {
-    // Disables Laravel's automatic managing of updated_at
     public $timestamps = false;
 
     protected $fillable = [

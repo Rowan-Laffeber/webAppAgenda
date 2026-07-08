@@ -7,19 +7,19 @@ use App\Models\Agenda;
 use App\Models\Activity;
 use App\Models\AgendaMember; // Added the member model
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB; // Added for safety transaction
+use Illuminate\Support\Facades\DB;
 
 class AgendaController extends Controller
 {
+
+    // index agenda
     public function index()
     {
         $userId = auth()->id();
 
-        // 1. Get IDs of all agendas where the user is an active member
         $joinedAgendaIds = AgendaMember::where('user_id', $userId)
             ->pluck('agenda_id');
 
-        // 2. Fetch agendas owned by the user OR found in the joined member IDs list
         $agendas = Agenda::where('user_id', $userId)
             ->orWhereIn('id', $joinedAgendaIds)
             ->get();
@@ -27,6 +27,7 @@ class AgendaController extends Controller
         return view('agendas.index', compact('agendas'));
     }
 
+    // create agenda
     public function create()
     {
         return view('agendas.create');
@@ -34,9 +35,7 @@ class AgendaController extends Controller
 
     public function store(Request $request)
     {
-        // Use a transaction so if the member insert fails, the agenda rollbacks
         DB::transaction(function () use ($request) {
-            // 1. Create the Agenda
             $agenda = Agenda::create([
                 'user_id'     => auth()->id(),
                 'name'        => $request->name,
@@ -44,7 +43,6 @@ class AgendaController extends Controller
                 'color'       => $request->color,
             ]);
 
-            // 2. Automatically attach the creator into agenda_members
             AgendaMember::create([
                 'agenda_id' => $agenda->id,
                 'user_id'   => auth()->id(),
@@ -55,9 +53,9 @@ class AgendaController extends Controller
         return redirect()->route('agendas.index');
     }
 
+    // show agenda
     public function show(Request $request, Agenda $agenda)
     {
-        // Security check: Must be owner OR an accepted member to view
         $isMember = AgendaMember::where('agenda_id', $agenda->id)
             ->where('user_id', auth()->id())
             ->exists();
@@ -123,9 +121,9 @@ class AgendaController extends Controller
         ));
     }
 
+    // edit agenda
     public function edit(Agenda $agenda)
     {
-        // Admin Check: Only the original creator can edit details
         if ($agenda->user_id !== auth()->id()) {
             abort(403, 'Only the agenda owner can edit this.');
         }
@@ -133,9 +131,9 @@ class AgendaController extends Controller
         return view('agendas.edit', compact('agenda'));
     }
 
+    // update agenda
     public function update(Request $request, Agenda $agenda)
     {
-        // Admin Check: Only the original creator can update details
         if ($agenda->user_id !== auth()->id()) {
             abort(403, 'Only the agenda owner can update this.');
         }
@@ -149,9 +147,9 @@ class AgendaController extends Controller
         return redirect()->route('agendas.show', $agenda);
     }
 
+    // destroy agenda
     public function destroy(Agenda $agenda)
     {
-        // Admin Check: Only the original creator can delete the entire agenda
         if ($agenda->user_id !== auth()->id()) {
             abort(403, 'Only the agenda owner can delete this.');
         }
